@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 whomds_viz.Rproj
+data
+.DS_Store
