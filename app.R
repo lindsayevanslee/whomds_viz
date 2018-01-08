@@ -13,14 +13,13 @@ library(tidyverse)
 library(broom)
 
 # Read in the pre-formatted data ----
-
 mdstest <- read.csv("data/mdstest.csv")
 
 # Load tidy table producing function ----
-# source()
+source("tabDodgeApp.R")
 
 # Load plotting function ----
-# source()
+source("ggBarplotDodgeApp.R")
 
 
 
@@ -31,9 +30,7 @@ ui <-
             titlePanel("MDSViz"),
             
             sidebarLayout(
-              
               sidebarPanel(
-                
                 h3("Options"),
                 
                 selectInput(
@@ -49,7 +46,7 @@ ui <-
                   h5("Indicators - Hard or very hard to use..."),
                   choices = list(
                     "Places where you socialize or engage in community activities" = "B3001",
-                    "Shopes, banks and post office" = "B3002",
+                    "Shops, banks and post office" = "B3002",
                     "Transportation" = "B3003",
                     "Dwelling including the toilet" = "B3004"
                   ),
@@ -58,60 +55,72 @@ ui <-
                   multiple = TRUE
                 ),
                 
-                selectInput(
-                  "disaggregators",
-                  h5("Disaggregators"),
+                
+                h5("Disaggregators"),
+                
+                radioButtons(
+                  "fill_col",
+                  h6("Disaggregator (fill column)"),
                   choices = list(
+                    "none" = "",
                     "Sex" = "sex",
                     "Age group" = "age_cat",
                     "Disability level" = "performance_cat"
                   ),
-                  selected = NULL,
-                  selectize = TRUE,
-                  multiple = TRUE
+                  selected = NULL
+                ),
+                
+                radioButtons(
+                  "facet_col",
+                  h6("Disaggregator (facet column; must be different than fill column)"),
+                  choices = list(
+                    "none" = "",
+                    "Sex" = "sex",
+                    "Age group" = "age_cat",
+                    "Disability level" = "performance_cat"
+                  ),
+                  selected = NULL
                 )
               ),
               
               mainPanel(
-                textOutput("selected_country"),
-                textOutput("selected_indicators"),
-                textOutput("selected_disaggregators"),
-                plotOutput("graph"),
-                verbatimTextOutput("verb")
+                plotOutput("graph")
+                , verbatimTextOutput("verb")
               )
-            ))
-
+            )
+            )
 
 # Define server logic ----
 server <- function(input, output) {
-  output$selected_country <- renderText({
-    paste("You have selected the country", input$country)
-  })
-  
-  output$selected_indicators <- renderText({
-    paste("You have selected the indicators", paste(input$indicators,collapse = ", "))
-  })
-  
-  output$selected_disaggregators <- renderText({
-    paste("You have selected the disaggregators", paste(input$disaggregators,collapse = ", "))
-  })
+
   
   output$graph <- renderPlot({
-
-    # tab <- tabFunc(...)
-    # plotFunc(tab,...)
     
     if (!is.null(input$indicators)) {
-      tab <- table(mdstest[, input$indicators])
-      plot(tab)
+      #calculate table
+      tab <- tabDodgeApp(mdstest, input$indicators, disaggs = c(input$fill_col, input$facet_col))
+      
+      #print graph
+      ggBarplotDodgeApp(tab, fill_col = input$fill_col, facet_col = input$facet_col)
+      
     }
   })
   
   # output$verb <- renderPrint({
-  #   input$indicators
-  #   head(mdstest[,input$indicators])
+  #   unlist(c(input$fill_col, input$facet_col))
+  #   # input$facet_col
+  #   # head(mdstest[,input$indicators])
   # })
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
+
+
+##FIX: need performance_cat to be ordered factor
+##FIX: label of legend
+##FIX: labels on xaxis
+##FIX: data labels positions (works for facet_col but not fill_col)
+
+# tab <- tabDodgeApp(mdstest, c("B3001","B3002"), "sex")
+
