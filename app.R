@@ -9,16 +9,18 @@
 
 library(shiny)
 library(shinythemes)
+library(tidyverse)
+library(broom)
 
 # Read in the pre-formatted data ----
 
 mdstest <- read.csv("data/mdstest.csv")
 
 # Load tidy table producing function ----
-source()
+# source()
 
 # Load plotting function ----
-source()
+# source()
 
 
 
@@ -39,22 +41,24 @@ ui <-
                   h5("Country"),
                   choices = list("Chile" = "Chile",
                                  "Sri Lanka" = "Sri Lanka"),
-                  selected = "Chile"
+                  selected = "Sri Lanka"
                 ),
                 
-                checkboxGroupInput(
+                selectInput(
                   "indicators",
-                  h5("Indicators"),
+                  h5("Indicators - Hard or very hard to use..."),
                   choices = list(
-                    "EF 1" = "B3001",
-                    "EF 2" = "B3002",
-                    "EF 3" = "B3003",
-                    "EF 4" = "B3004"
+                    "Places where you socialize or engage in community activities" = "B3001",
+                    "Shopes, banks and post office" = "B3002",
+                    "Transportation" = "B3003",
+                    "Dwelling including the toilet" = "B3004"
                   ),
-                  selected = NULL
+                  selected = NULL,
+                  selectize = TRUE,
+                  multiple = TRUE
                 ),
                 
-                checkboxGroupInput(
+                selectInput(
                   "disaggregators",
                   h5("Disaggregators"),
                   choices = list(
@@ -62,7 +66,9 @@ ui <-
                     "Age group" = "age_cat",
                     "Disability level" = "performance_cat"
                   ),
-                  selected = NULL
+                  selected = NULL,
+                  selectize = TRUE,
+                  multiple = TRUE
                 )
               ),
               
