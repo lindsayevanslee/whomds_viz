@@ -9,6 +9,7 @@
 
 library(shiny)
 library(shinythemes)
+library(plyr)
 library(tidyverse)
 library(broom)
 
@@ -22,6 +23,12 @@ source("tabDodgeApp.R")
 source("ggBarplotDodgeApp.R")
 
 # Save indicator choices input
+indicator_choices <- list(
+  "Places where you socialize or engage in community activities" = "B3001",
+  "Shops, banks and post office" = "B3002",
+  "Transportation" = "B3003",
+  "Dwelling including the toilet" = "B3004"
+)
 
 
 # Define UI ----
@@ -45,12 +52,7 @@ ui <-
                 selectInput(
                   "indicators",
                   h5("Indicators - Hard or very hard to use..."),
-                  choices = list(
-                    "Places where you socialize or engage in community activities" = "B3001",
-                    "Shops, banks and post office" = "B3002",
-                    "Transportation" = "B3003",
-                    "Dwelling including the toilet" = "B3004"
-                  ),
+                  choices = indicator_choices,
                   selected = NULL,
                   selectize = TRUE,
                   multiple = TRUE
@@ -86,7 +88,7 @@ ui <-
               
               mainPanel(
                 plotOutput("graph")
-                , verbatimTextOutput("verb")
+                # , verbatimTextOutput("verb")
               )
             )
             )
@@ -119,6 +121,4 @@ shinyApp(ui = ui, server = server)
 
 
 ##FIX: labels on xaxis
-
-# tab <- tabDodgeApp(mdstest, c("B3001","B3002"), "sex")
-
+##FIX: choose which dataset to use
