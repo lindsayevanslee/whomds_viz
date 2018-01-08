@@ -21,6 +21,7 @@ source("tabDodgeApp.R")
 # Load plotting function ----
 source("ggBarplotDodgeApp.R")
 
+# Save indicator choices input
 
 
 # Define UI ----
@@ -60,7 +61,7 @@ ui <-
                 
                 radioButtons(
                   "fill_col",
-                  h6("Disaggregator (fill column)"),
+                  h6("Fill column"),
                   choices = list(
                     "none" = "",
                     "Sex" = "sex",
@@ -72,7 +73,7 @@ ui <-
                 
                 radioButtons(
                   "facet_col",
-                  h6("Disaggregator (facet column; must be different than fill column)"),
+                  h6("Facet column; must be different than fill column"),
                   choices = list(
                     "none" = "",
                     "Sex" = "sex",
@@ -117,10 +118,7 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 
 
-##FIX: need performance_cat to be ordered factor
-##FIX: label of legend
 ##FIX: labels on xaxis
-##FIX: data labels positions (works for facet_col but not fill_col)
 
 # tab <- tabDodgeApp(mdstest, c("B3001","B3002"), "sex")
 

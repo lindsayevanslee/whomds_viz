@@ -5,6 +5,10 @@ tabDodgeApp <- function(df, cols, disaggs = NULL) {
   disaggs <- disaggs[!(disaggs=="")]
   if (length(disaggs)==0) disaggs <- NULL
   
+  if ("performance_cat" %in% disaggs) {
+    df[,"performance_cat"] <- ordered(df[,"performance_cat"], levels = c("No", "Mild", "Moderate", "Severe"))
+  }
+  
   df <- df %>%
     tbl_df() %>%
     select(c(cols, disaggs)) %>%
