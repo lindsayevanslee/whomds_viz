@@ -1,4 +1,4 @@
-ggBarplotDodgeApp <- function(tab, fill_col = "", facet_col = "", indicator_choices) {
+mds_barplot <- function(tab, fill_col = "", facet_col = "", indicator_choices) {
  
   #change questions to english labels
   tab$q <- plyr::mapvalues(tab$q,

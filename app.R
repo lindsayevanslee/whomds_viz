@@ -15,7 +15,7 @@ df_all <- list(srilanka_brief = read_csv("data/srilanka_brief.csv"),
 source("tab_for_plot.R")
 
 # Load plotting function ----
-source("ggBarplotDodgeApp.R")
+source("mds_barplot.R")
 
 # Save indicator choices input (all countries must have same column labels)
 indicator_choices <- list(
@@ -43,7 +43,7 @@ ui <-
                                  "Sri Lanka" = "srilanka_brief"),
                   selected = "srilanka_brief"
                 ),
-
+                
                 selectInput(
                   "indicators",
                   h5("Indicators"),
@@ -101,11 +101,11 @@ ui <-
                 uiOutput("button")
               )
             )
-            )
+  )
 
 # Define server logic ----
 server <- function(input, output) {
-
+  
   #reactive object that selects data set and creates survey object if desired
   df_final <- reactive({
     
@@ -121,8 +121,8 @@ server <- function(input, output) {
           weights = contains("WEIGHT"),
           nest = TRUE
         ) 
-        
-        return(des)
+      
+      return(des)
       
       
     } else {
@@ -145,10 +145,10 @@ server <- function(input, output) {
                           resp_values = as.numeric(input$resp_values))
       
       #print graph
-      ggBarplotDodgeApp(tab, 
-                        fill_col = input$fill_col, 
-                        facet_col = input$facet_col, 
-                        indicator_choices = indicator_choices)
+      mds_barplot(tab, 
+                  fill_col = input$fill_col, 
+                  facet_col = input$facet_col, 
+                  indicator_choices = indicator_choices)
       
     }
   }
@@ -164,7 +164,7 @@ server <- function(input, output) {
     if (is.null(myplot())) return()
     downloadButton("download", "Download plot")
   })
-
+  
   #allow user to download plot ---------
   output$download <- downloadHandler(
     filename = function() { paste0("MDS_PLOT", ".png") },
@@ -177,7 +177,7 @@ server <- function(input, output) {
     }
   )
   
-
+  
 }
 
 # Run the application
