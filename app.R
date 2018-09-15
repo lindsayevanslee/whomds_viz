@@ -97,9 +97,8 @@ ui <-
               
               mainPanel(
                 "THE VALUES LISTED HERE ARE A DEMONSTRATION ONLY AND DO NOT REPRESENT ACCURATE DATA GATHERED BY THE WORLD HEALTH ORGANIZATION.",
-                plotOutput("graph")
-                ##FIX: DOESN'T WORK
-                # , uiOutput("ui.action")
+                plotOutput("graph"), 
+                uiOutput("button")
               )
             )
             )
@@ -134,15 +133,16 @@ server <- function(input, output) {
   })
   
   #plot------
-  output$graph <- renderPlot({
-    
+  
+  #create function with plot
+  myplot <- function() {
     if (!is.null(input$indicators)) {
       #calculate table
       tab <- tab_for_plot(df = df_final(), 
-                         cols = input$indicators, 
-                         disaggs = c(input$fill_col, input$facet_col),
-                         weighted = input$weighted, 
-                         resp_values = as.numeric(input$resp_values))
+                          cols = input$indicators, 
+                          disaggs = c(input$fill_col, input$facet_col),
+                          weighted = input$weighted, 
+                          resp_values = as.numeric(input$resp_values))
       
       #print graph
       ggBarplotDodgeApp(tab, 
@@ -151,23 +151,31 @@ server <- function(input, output) {
                         indicator_choices = indicator_choices)
       
     }
-  }, height = 700)
+  }
+  
+  #render the plot
+  output$graph <- renderPlot({
+    myplot()
+  })
   
   
-  ### FIX: DOESN'T WORK
-  # # make download button appear after data uploaded ----------
-  # output$ui.action <- renderUI({
-  #   if (is.null(output$graph)) return()
-  #   downloadButton("download", "Download plot")
-  # })
-  # 
-  # #allow user to download plot ---------
-  # output$download <- downloadHandler(
-  #   filename = function() { paste0("MDS_PLOT", ".png") },
-  #   content = function(file) {
-  #     ggsave(file, plot = output$graph, device = "png")
-  #   }
-  # )
+  # make download button appear after data uploaded ----------
+  output$button <- renderUI({
+    if (is.null(myplot())) return()
+    downloadButton("download", "Download plot")
+  })
+
+  #allow user to download plot ---------
+  output$download <- downloadHandler(
+    filename = function() { paste0("MDS_PLOT", ".png") },
+    content = function(file) {
+      ggsave(file, 
+             plot = myplot(), 
+             device = png(), 
+             width = 7, height = 7, 
+             units = "cm")
+    }
+  )
   
 
 }
@@ -175,6 +183,6 @@ server <- function(input, output) {
 # Run the application
 shinyApp(ui = ui, server = server)
 
-
-##FIX: labels on xaxis
+##FIX: fix how the downloaded plots look
+##FIX: make x-axis labels prettier
 ##FIX: expand list of indicators
