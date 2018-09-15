@@ -1,9 +1,10 @@
-ggBarplotDodgeApp <- function(tab, fill_col = "", facet_col = "") {
+ggBarplotDodgeApp <- function(tab, fill_col = "", facet_col = "", indicator_choices) {
  
-  # #change questions to english labels
-  # tab$q <- plyr::mapvalues(tab$q,
-  #                          from = unlist(indicator_choices),
-  #                          to = names(indicator_choices))
+  #change questions to english labels
+  tab$q <- plyr::mapvalues(tab$q,
+                           from = unlist(indicator_choices),
+                           to = names(indicator_choices), 
+                           warn_missing = FALSE)
   
   #initialize ggplot, based on whether there is a fill
   if (fill_col=="") {
